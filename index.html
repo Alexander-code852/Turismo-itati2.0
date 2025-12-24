@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Turismo Itatí</title>
+    
+    <meta property="og:title" content="Turismo Itatí - Mapa Interactivo">
+    <meta property="og:description" content="Encuentra alojamientos, comedores y sitios históricos en Itatí. Guía turística con GPS.">
+    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Bas%C3%ADlica_de_Nuestra_Se%C3%B1ora_de_Itat%C3%AD_-_Corrientes.jpg/800px-Bas%C3%ADlica_de_Nuestra_Se%C3%B1ora_de_Itat%C3%AD_-_Corrientes.jpg">
+    <meta property="og:type" content="website">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00897B">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2236/2236962.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <button id="menu-toggle"><i class="fas fa-bars"></i></button>
+
+    <div id="filter-chips">
+        <button onclick="filtrarMapa('todos')" class="chip active">Todo</button>
+        <button onclick="filtrarMapa('turismo')" class="chip"><i class="fas fa-camera"></i> Pasear</button>
+        <button onclick="filtrarMapa('gastronomia')" class="chip"><i class="fas fa-utensils"></i> Comer</button>
+        <button onclick="filtrarMapa('hospedaje')" class="chip"><i class="fas fa-bed"></i> Dormir</button>
+        <button onclick="filtrarMapa('servicios')" class="chip"><i class="fas fa-plus-circle"></i> Servicios</button>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <div class="titulo-row">
+                <h2>Descubre Itatí</h2>
+                <button id="close-sidebar-btn" onclick="cerrarMenu()"><i class="fas fa-times"></i></button>
+            </div>
+            <span id="clima-widget" class="clima-badge">🌤️ Cargando...</span>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="buscador-input" placeholder="Buscar lugar..." onkeyup="filtrarPorBusqueda()">
+            </div>
+        </div>
+
+        <div class="sidebar-content">
+            
+            <div class="control-panel">
+                <button onclick="verCercanos()" class="btn-accion btn-cerca">
+                    <i class="fas fa-location-arrow"></i> Cerca de mí
+                </button>
+                <button onclick="abrirModalInfo()" class="btn-accion btn-info">
+                    <i class="fas fa-info-circle"></i> Info Útil
+                </button>
+            </div>
+
+            <p class="aviso-gps" id="estado-gps">📡 GPS Inactivo</p>
+            <hr style="border:0; border-top:1px solid var(--border-color); margin: 15px 0;">
+
+            <div class="categoria-item open" id="cat-turismo"> <div class="categoria-header" onclick="toggleAcordeon('cat-turismo')">
+                    <span>📸 Turismo y Fe</span> <i class="fas fa-chevron-down flecha"></i>
+                </div>
+                <ul id="lista-turismo" class="lista-lugares"></ul>
+            </div>
+
+            <div class="categoria-item" id="cat-gastronomia">
+                <div class="categoria-header" onclick="toggleAcordeon('cat-gastronomia')">
+                    <span>🍴 Sabores Locales</span> <i class="fas fa-chevron-down flecha"></i>
+                </div>
+                <ul id="lista-gastronomia" class="lista-lugares"></ul>
+            </div>
+
+            <div class="categoria-item" id="cat-hospedaje">
+                <div class="categoria-header" onclick="toggleAcordeon('cat-hospedaje')">
+                    <span>🛏️ Descanso</span> <i class="fas fa-chevron-down flecha"></i>
+                </div>
+                <ul id="lista-hospedaje" class="lista-lugares"></ul>
+            </div>
+
+            <div class="categoria-item" id="cat-servicios">
+                <div class="categoria-header" onclick="toggleAcordeon('cat-servicios')">
+                    <span>🚑 Servicios</span> <i class="fas fa-chevron-down flecha"></i>
+                </div>
+                <ul id="lista-servicios" class="lista-lugares"></ul>
+            </div>
+
+            <div style="margin-top: 30px; margin-bottom: 20px; text-align: center; padding: 20px; background: #E0F2F1; border-radius: 15px;">
+                <p style="font-size: 0.9rem; color: #00695C; margin-bottom: 10px;">¿Falta algún lugar?</p>
+                <a href="https://wa.me/5493794000000?text=Hola,%20quiero%20sugerir%20un%20lugar%20para%20el%20mapa:" 
+                   target="_blank" 
+                   style="background: #00897B; color: white; text-decoration: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; display: inline-block;">
+                   <i class="fas fa-plus"></i> Agregar mi negocio
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-info" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModalInfo()">&times;</span>
+            <h2 style="color:var(--color-primario)">ℹ️ Datos Útiles</h2>
+            <div class="info-section">
+                <h4>⛪ Misa (Basílica)</h4>
+                <p>Lu-Sa: 08:30, 10:00, 19:00 hs.<br>Dom: 06:30 a 19:00 hs.</p>
+            </div>
+            <div class="info-section">
+                <h4>📞 Emergencias</h4>
+                <p>Policía: 101<br>Hospital: 107<br>Bomberos: 100</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <button id="btn-borrar-ruta" onclick="borrarRuta()" 
+        style="display:none; position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:999; 
+               background:#D32F2F; color:white; border:none; padding:12px 25px; border-radius:50px; 
+               font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.3); align-items:center; gap:8px; cursor:pointer;">
+        <i class="fas fa-times"></i> Terminar Ruta
+    </button>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
