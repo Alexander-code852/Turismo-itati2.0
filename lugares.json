@@ -1,0 +1,46 @@
+[
+  { 
+    "nombre": "Hotel Del Río", "tipo": "hotel", "destacado": true, "estrellas": 5,
+    "lat": -27.273906, "lng": -58.242332, 
+    "desc": "Hotel céntrico. El mejor descanso en Itatí.", 
+    "wp": "5493794000000",
+    "img": "https://placehold.co/400x200/F8BBD0/880E4F?text=HOTEL+DEL+RIO"
+  },
+  { 
+    "nombre": "Basílica de Itatí", "tipo": "iglesia", "estrellas": 5,
+    "lat": -27.269210, "lng": -58.243923, 
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Bas%C3%ADlica_de_Nuestra_Se%C3%B1ora_de_Itat%C3%AD_-_Corrientes.jpg/320px-Bas%C3%ADlica_de_Nuestra_Se%C3%B1ora_de_Itat%C3%AD_-_Corrientes.jpg", 
+    "desc": "Santuario histórico. Pulsa el audio para escuchar la historia.", 
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/7/75/Canto_de_los_pájaros_del_litoral.ogg",
+    "wp": "5493794000000" 
+  },
+  { 
+    "nombre": "Plaza Bolaños", "tipo": "plaza", "estrellas": 4,
+    "lat": -27.269265, "lng": -58.242503, 
+    "img": "https://placehold.co/400x200/E8F5E9/2E7D32?text=Plaza+Bolaños", "desc": "Plaza principal." 
+  },
+  { 
+    "nombre": "Costanera del Paraná", "tipo": "turismo", "estrellas": 4,
+    "lat": -27.267500, "lng": -58.244000, 
+    "img": "https://placehold.co/400x200/E0F7FA/006064?text=Costanera", "desc": "Paseo costero y mirador." 
+  },
+  { 
+    "nombre": "Comedor El Peregrino", "tipo": "comida", "estrellas": 3,
+    "lat": -27.268500, "lng": -58.243000, 
+    "img": "https://placehold.co/400x200/FFCCBC/BF360C?text=Comedor", "desc": "Platos típicos familiares.", "wp": "5493794111111" 
+  },
+  { 
+    "nombre": "Parrilla Don José", "tipo": "parrilla", "estrellas": 4,
+    "lat": -27.270100, "lng": -58.245000, "desc": "Asado a la estaca." 
+  },
+  { 
+    "nombre": "Camping Municipal", "tipo": "camping", "estrellas": 3,
+    "lat": -27.273903, "lng": -58.250262, "desc": "Zona de acampe." 
+  },
+  { 
+    "nombre": "Terminal de Combis", "tipo": "turismo", "estrellas": 3,
+    "lat": -27.271000, "lng": -58.243500, "desc": "Salida de combis." 
+  },
+  { "nombre": "Hospital", "tipo": "salud", "lat": -27.273954, "lng": -58.248380, "desc": "Atención médica.", "wp": "107" },
+  { "nombre": "Farmacia Farmaben", "tipo": "farmacia", "lat": -27.271770, "lng": -58.242972, "desc": "Farmacia de turno." }
+]

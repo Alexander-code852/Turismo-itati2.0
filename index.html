@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Turismo Itatí</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2236/2236962.png" type="image/png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Parisienne&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+    <link rel="stylesheet" href="style.css?v=13.5">
+</head>
+<body>
+
+    <div id="offline-indicator">⚠️ Sin conexión a internet - Modo Offline</div>
+
+    <div id="splash-screen">
+        <div class="loader-content">
+            <svg class="logo-cinematic" width="180" height="180" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="grad-basilica" x1="100" y1="50" x2="100" y2="150" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#26A69A" /> 
+                        <stop offset="1" stop-color="#004D40" /> 
+                    </linearGradient>
+                    <linearGradient id="grad-rio" x1="0" y1="160" x2="200" y2="160" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4DB6AC" />
+                        <stop offset="1" stop-color="#00695C" />
+                    </linearGradient>
+                </defs>
+    
+                <circle class="sun-rise" cx="100" cy="70" r="40" fill="#FFB300" opacity="0.8" />
+    
+                <path class="draw-path" 
+                      d="M100 25 V45 M85 45 H115 M60 140 V90 C60 60 140 60 140 90 V140 H60 Z M40 140 V100 L60 90 M160 140 V100 L140 90" 
+                      stroke="#FFFFFF" stroke-width="2.5" fill="url(#grad-basilica)" />
+                
+                <path class="river-flow" 
+                      d="M20 160 Q 60 150 100 160 T 180 160" 
+                      stroke="url(#grad-rio)" stroke-width="4" stroke-linecap="round" fill="none" />
+                 <path class="river-flow" style="animation-delay: -1s;"
+                      d="M30 175 Q 70 165 110 175 T 190 175" 
+                      stroke="url(#grad-rio)" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5" />
+            </svg>
+    
+            <h2 class="title-reveal">TURISMO <span>Itatí</span></h2>
+            
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+
+    <button id="menu-toggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
+
+    <div id="filter-chips">
+        <button onclick="filtrarMapa('todos')" class="chip active">Todo</button>
+        <button onclick="filtrarMapa('favoritos')" class="chip"><i class="fas fa-heart" style="color: #ff4757;"></i> Favoritos</button>
+        <button onclick="filtrarMapa('turismo')" class="chip"><i class="fas fa-camera"></i> Pasear</button>
+        <button onclick="filtrarMapa('gastronomia')" class="chip"><i class="fas fa-utensils"></i> Comer</button>
+        <button onclick="filtrarMapa('hospedaje')" class="chip"><i class="fas fa-bed"></i> Dormir</button>
+        <button onclick="filtrarMapa('servicios')" class="chip"><i class="fas fa-plus-circle"></i> Servicios</button>
+    </div>
+
+    <div id="sidebar">
+       <div class="sidebar-header">
+            <div class="titulo-row">
+                <h2>Descubre</h2>
+                
+                <button id="theme-toggle" onclick="alternarTema()" title="Cambiar Tema"><i class="fas fa-moon"></i></button>
+                <button id="close-sidebar-btn" onclick="cerrarMenu()"><i class="fas fa-times"></i></button>
+            </div>
+            <span id="clima-widget" class="clima-badge"><i class="fas fa-cloud"></i> Cargando...</span>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="buscador-input" placeholder="Buscar lugar..." onkeyup="filtrarPorBusqueda()">
+            </div>
+        </div>
+
+        <div class="sidebar-content">
+             <div class="control-panel">
+                <button onclick="verCercanos()" class="btn-accion btn-cerca">
+                    <i class="fas fa-location-arrow"></i> Cerca Mío
+                </button>
+                <button onclick="compartirApp()" class="btn-accion btn-share">
+                    <i class="fas fa-share-alt"></i> Compartir
+                </button>
+                <button onclick="gestionarEstacionamiento()" class="btn-accion btn-car">
+                    <i class="fas fa-car"></i> Mi Auto
+                </button>
+                <button onclick="cargarHorariosCombis()" class="btn-accion btn-info">
+                    <i class="fas fa-bus"></i> Combis
+                </button>
+                <button onclick="cargarEventos()" class="btn-accion btn-eventos">
+                    <i class="fas fa-calendar-alt"></i> Eventos
+                </button>
+                <button onclick="mostrarQR()" class="btn-accion" style="background: linear-gradient(135deg, #34495e, #2c3e50);">
+                    <i class="fas fa-qrcode"></i> QR App
+                </button>
+                <button id="btn-instalar" onclick="instalarApp()" class="btn-accion btn-install" style="display: none; grid-column: span 2;">
+                    <i class="fas fa-download"></i> Instalar App
+                </button>
+            </div>
+            
+            <p class="aviso-gps" id="estado-gps" style="font-size: 0.8rem; color: var(--text-secondary); text-align:center;">📡 Buscando señal GPS...</p>
+            <hr style="border:0; border-top:1px solid var(--border-color); margin: 15px 0;">
+
+            <div id="contenedor-listas">
+                <div class="categoria-item open" id="cat-turismo"> 
+                    <div class="categoria-header" onclick="toggleAcordeon('cat-turismo')">
+                        <span>📸 Turismo y Fe</span> <i class="fas fa-chevron-down flecha"></i>
+                    </div>
+                    <ul id="lista-turismo" class="lista-lugares"></ul>
+                </div>
+                <div class="categoria-item" id="cat-gastronomia">
+                    <div class="categoria-header" onclick="toggleAcordeon('cat-gastronomia')">
+                        <span>🍴 Sabores Locales</span> <i class="fas fa-chevron-down flecha"></i>
+                    </div>
+                    <ul id="lista-gastronomia" class="lista-lugares"></ul>
+                </div>
+                <div class="categoria-item" id="cat-hospedaje">
+                    <div class="categoria-header" onclick="toggleAcordeon('cat-hospedaje')">
+                        <span>🛏️ Descanso</span> <i class="fas fa-chevron-down flecha"></i>
+                    </div>
+                    <ul id="lista-hospedaje" class="lista-lugares"></ul>
+                </div>
+                <div class="categoria-item" id="cat-servicios">
+                    <div class="categoria-header" onclick="toggleAcordeon('cat-servicios')">
+                        <span>🚑 Servicios</span> <i class="fas fa-chevron-down flecha"></i>
+                    </div>
+                    <ul id="lista-servicios" class="lista-lugares"></ul>
+                </div>
+            </div>
+
+            <div class="box-sugerencia">
+                <p>¿Tienes un negocio en Itatí?</p>
+                <a href="https://wa.me/5493794000000?text=Hola,%20quiero%20sumar%20mi%20negocio" target="_blank" class="btn-sugerir">
+                   <i class="fas fa-star"></i> Aparecer aquí
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>Desarrollado con <i class="fas fa-heart" style="color:#ff4757"></i> por <strong>TechFix</strong></p>
+            <p style="font-size:0.7rem; opacity:0.7; margin-top:2px;">Versión 1.3.5</p>
+        </div>
+    </div>
+
+    <div id="modal-info" class="modal">
+         <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModal('modal-info')">×</span>
+            <div class="modal-header-custom">
+                <i class="fas fa-bus-alt" style="font-size: 2rem; color: var(--color-primario);"></i>
+                <div>
+                    <h2 style="margin:0; color:var(--text-main);">Horarios y Combis</h2>
+                    <p style="margin:5px 0 0 0; font-size:0.9rem; color:var(--text-secondary);">Itatí ↔ Corrientes</p>
+                </div>
+            </div>
+            <div id="contenedor-horarios" class="horarios-wrapper">Cargando...</div>
+            <p style="font-size: 0.8rem; text-align: center; margin-top: 20px; color: #999;">* Llama para confirmar lugar.</p>
+        </div>
+    </div>
+    
+    <div id="modal-eventos" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModal('modal-eventos')">×</span>
+            <h2>📅 Agenda Itateña</h2>
+            <div id="eventos-container" class="timeline"></div>
+        </div>
+    </div>
+
+    <div id="modal-qr" class="modal">
+        <div class="modal-content" style="text-align:center;">
+            <span class="close-btn" onclick="cerrarModal('modal-qr')">×</span>
+            <h2 style="color:var(--color-primario);">¡Escanéame!</h2>
+            <p style="margin-bottom:20px; color:var(--text-secondary);">Lleva Turismo Itatí en tu celular</p>
+            <img id="qr-image" src="" alt="Cargando QR..." style="width:200px; height:200px; border-radius:10px; border: 2px solid #eee;">
+            <p style="font-size:0.8rem; margin-top:20px; opacity:0.6;">Apunta con la cámara</p>
+        </div>
+    </div>
+
+    <button class="btn-sos" onclick="abrirModal('modal-sos')">SOS</button>
+    <div id="modal-sos" class="modal">
+        <div class="modal-content sos-content">
+            <span class="close-btn" onclick="cerrarModal('modal-sos')">×</span>
+            <div class="sos-header">
+                <i class="fas fa-ambulance pulse-red"></i>
+                <h2 style="color:#D32F2F">Emergencias</h2>
+            </div>
+            <div class="grid-sos">
+                <a href="tel:101" class="btn-sos-call policia"><i class="fas fa-user-shield"></i> Policía (101)</a>
+                <a href="tel:107" class="btn-sos-call hospital"><i class="fas fa-hospital"></i> Hospital (107)</a>
+                <a href="tel:100" class="btn-sos-call bomberos"><i class="fas fa-fire-extinguisher"></i> Bomberos (100)</a>
+                <a href="tel:106" class="btn-sos-call prefectura"><i class="fas fa-anchor"></i> Prefectura (106)</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+    <div id="toast-container"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="script.js?v=13.5"></script>
+</body>
+</html>
